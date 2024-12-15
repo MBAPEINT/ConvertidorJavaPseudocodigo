@@ -1,0 +1,343 @@
+package proyectofinal;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+
+    public void syntax_error(Symbol s) {
+        this.s = s;
+    }
+
+    public Symbol getS() {
+        return this.s;
+    }
+:};
+
+// Definición de Terminales
+terminal If, Else, Switch, Case, Default, While, Do, For, Break, Continue, Return,
+        Class, Interface, Extends, Implements, Void, New,
+        Public, Private, Protected, Static, Abstract,
+        Int, Integer, Long, Short, Byte, Float, Double, Boolean, Char,
+        Try, Catch, Finally, This, Super, Null,
+        OpLogico, OpComparacion, OpAritmetico, OpIncremento, OpAsignacion,
+        ParentesisAbierto, ParentesisCerrado, LlaveAbierta, LlaveCerrada,
+        CorcheteAbierto, CorcheteCerrado, PuntoComa, Punto, Coma,
+        Identificador, NumeroEntero, NumeroDecimal, CadenaTexto,
+        Main, SystemClass, Out, Println, Print, String, Args, Length, DosPuntos,
+        Override;
+
+// No Terminales
+non terminal INICIO, CLASE, SENTENCIA, BLOQUE, 
+            CONTROL_FLUJO, EXPRESION, TIPO_DATO, PARAMETROS,
+            LISTA_PARAMETROS, CUERPO_METODO, IF_STMT,
+            WHILE_STMT, FOR_STMT, DO_WHILE_STMT, SWITCH_STMT,
+            CASE_BLOCK, TRY_CATCH, DECLARACION_VAR, ASIGNACION,
+            DECLARACION_ARRAY, ASIGNACION_ARRAY, EXPRESION_INCREMENTO,
+            CASE_BLOCKS, CASE_BODY, DECLARACION_OBJETO,
+            LLAMADA_METODO, ARGUMENTOS, LISTA_ARGUMENTOS,
+            TERMINO, PRINT_STMT, LLAMADA_METODO_EXPR, INTERFACE,
+            METODO_INTERFACE, DECLARACION_CLASE, LISTA_METODOS_INTERFACE, 
+            MIEMBROS_CLASE, MIEMBRO_CLASE, DECLARACION_CAMPO, 
+            DECLARACION_METODO, ELSE_PART;
+
+// Precedencia de operadores
+precedence left Punto;
+precedence left OpLogico;
+precedence left OpComparacion;
+precedence left OpAritmetico;
+precedence left ParentesisAbierto, ParentesisCerrado;
+
+// Punto de inicio
+start with INICIO;
+
+// Reglas de Producción
+
+// Inicio del Programa
+INICIO ::= 
+    DECLARACION_CLASE
+;
+
+// Declaraciones de Interfaces y Clases
+DECLARACION_CLASE ::=
+    CLASE
+    | INTERFACE
+    | DECLARACION_CLASE CLASE
+    | DECLARACION_CLASE INTERFACE
+;
+
+INTERFACE ::=
+    Public Interface Identificador LlaveAbierta LISTA_METODOS_INTERFACE LlaveCerrada
+;
+
+LISTA_METODOS_INTERFACE ::=
+    /* vacío */
+    | LISTA_METODOS_INTERFACE METODO_INTERFACE
+;
+
+METODO_INTERFACE ::=
+    Public Void Identificador ParentesisAbierto PARAMETROS ParentesisCerrado PuntoComa
+    | Public TIPO_DATO Identificador ParentesisAbierto PARAMETROS ParentesisCerrado PuntoComa
+;
+
+CLASE ::=
+    Public Class Identificador LlaveAbierta MIEMBROS_CLASE LlaveCerrada
+    | Public Class Identificador Extends Identificador LlaveAbierta MIEMBROS_CLASE LlaveCerrada
+    | Public Class Identificador Implements Identificador LlaveAbierta MIEMBROS_CLASE LlaveCerrada
+    | Public Abstract Class Identificador LlaveAbierta MIEMBROS_CLASE LlaveCerrada
+    | Public Abstract Class Identificador Implements Identificador LlaveAbierta MIEMBROS_CLASE LlaveCerrada
+;
+
+MIEMBROS_CLASE ::=
+    /* vacío */
+    | MIEMBROS_CLASE MIEMBRO_CLASE
+;
+
+MIEMBRO_CLASE ::=
+    DECLARACION_CAMPO
+    | DECLARACION_METODO
+;
+
+// Declaraciones de Campos
+DECLARACION_CAMPO ::=
+    Private TIPO_DATO Identificador PuntoComa
+    | Private Static Class Identificador BLOQUE
+    | Protected TIPO_DATO Identificador PuntoComa
+    | Public TIPO_DATO Identificador PuntoComa
+;
+
+// Declaraciones de Métodos
+DECLARACION_METODO ::=
+    // Método Main
+    Public Static Void Main ParentesisAbierto String CorcheteAbierto CorcheteCerrado Args ParentesisCerrado BLOQUE
+    | Private Static Void Main ParentesisAbierto String CorcheteAbierto CorcheteCerrado Args ParentesisCerrado BLOQUE
+
+    
+    // Métodos con Override
+    | Override Public Void Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Override Public TIPO_DATO Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Override Private Void Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Override Private TIPO_DATO Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    
+    // Métodos regulares de retorno
+    | Public TIPO_DATO Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Public TIPO_DATO CorcheteAbierto CorcheteCerrado Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Private TIPO_DATO Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Private TIPO_DATO CorcheteAbierto CorcheteCerrado Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    
+    // Métodos void
+    | Public Void Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Private Void Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    
+    // Métodos estáticos
+    | Public Static Void Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Public Static TIPO_DATO Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Public Static TIPO_DATO CorcheteAbierto CorcheteCerrado Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Private Static TIPO_DATO CorcheteAbierto CorcheteCerrado Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Private Static Void Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Private Static TIPO_DATO Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    
+    // Métodos abstractos
+    | Public Abstract Void Identificador ParentesisAbierto PARAMETROS ParentesisCerrado PuntoComa
+    | Public Abstract TIPO_DATO Identificador ParentesisAbierto PARAMETROS ParentesisCerrado PuntoComa
+    | Private Abstract Void Identificador ParentesisAbierto PARAMETROS ParentesisCerrado PuntoComa
+    | Private Abstract TIPO_DATO Identificador ParentesisAbierto PARAMETROS ParentesisCerrado PuntoComa
+    
+    // Constructor
+    | Public Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+    | Private Identificador ParentesisAbierto PARAMETROS ParentesisCerrado BLOQUE
+;
+
+// Parámetros
+PARAMETROS ::=
+    /* vacío */
+    | LISTA_PARAMETROS
+;
+
+LISTA_PARAMETROS ::=
+    TIPO_DATO Identificador
+    | TIPO_DATO CorcheteAbierto CorcheteCerrado Identificador
+    | LISTA_PARAMETROS Coma TIPO_DATO Identificador
+    | LISTA_PARAMETROS Coma TIPO_DATO CorcheteAbierto CorcheteCerrado Identificador
+;
+
+// Bloques y Cuerpo de Métodos
+BLOQUE ::=
+    LlaveAbierta CUERPO_METODO LlaveCerrada
+    | LlaveAbierta Break PuntoComa LlaveCerrada
+;
+
+CUERPO_METODO ::=
+    /* vacío */
+    | CUERPO_METODO SENTENCIA
+;
+
+// Sentencias
+SENTENCIA ::=
+    DECLARACION_VAR
+    | ASIGNACION
+    | CONTROL_FLUJO
+    | Return EXPRESION PuntoComa
+    | PRINT_STMT
+    | DECLARACION_ARRAY
+    | ASIGNACION_ARRAY
+    | Identificador OpIncremento PuntoComa
+    | TRY_CATCH
+    | Identificador OpAsignacion EXPRESION PuntoComa
+    | DECLARACION_OBJETO
+    | LLAMADA_METODO
+    | Super ParentesisAbierto ARGUMENTOS ParentesisCerrado PuntoComa
+    | DO_WHILE_STMT
+;
+
+// Declaración de Tipos de Datos
+TIPO_DATO ::=
+    Int | Long | Short | Byte | Float | Double | Boolean | Char | String | Integer
+;
+
+// Declaraciones de Variables
+DECLARACION_VAR ::=
+    Identificador Identificador PuntoComa
+    | Private Identificador Identificador PuntoComa
+    | Private TIPO_DATO Identificador PuntoComa
+    | TIPO_DATO Identificador PuntoComa
+    | TIPO_DATO Identificador OpAsignacion EXPRESION PuntoComa
+    | TIPO_DATO CorcheteAbierto CorcheteCerrado Identificador OpAsignacion LLAMADA_METODO_EXPR PuntoComa
+;
+
+// Declaraciones de Arrays
+DECLARACION_ARRAY ::=
+    TIPO_DATO CorcheteAbierto CorcheteCerrado Identificador OpAsignacion New TIPO_DATO CorcheteAbierto EXPRESION CorcheteCerrado PuntoComa
+    | TIPO_DATO CorcheteAbierto CorcheteCerrado Identificador OpAsignacion LlaveAbierta LISTA_ARGUMENTOS LlaveCerrada PuntoComa
+    | TIPO_DATO Identificador OpAsignacion New TIPO_DATO CorcheteAbierto EXPRESION CorcheteCerrado PuntoComa
+;
+
+// Control de Flujo
+CONTROL_FLUJO ::=
+    IF_STMT
+    | WHILE_STMT
+    | FOR_STMT
+    | SWITCH_STMT
+;
+
+// Declaraciones de Control de Flujo
+IF_STMT ::=
+    If ParentesisAbierto EXPRESION ParentesisCerrado BLOQUE
+    |If ParentesisAbierto OpLogico EXPRESION ParentesisCerrado BLOQUE
+    | If ParentesisAbierto EXPRESION ParentesisCerrado BLOQUE ELSE_PART
+    | Continue PuntoComa
+;
+
+ELSE_PART ::=
+    Else BLOQUE
+    | Else If ParentesisAbierto EXPRESION ParentesisCerrado BLOQUE ELSE_PART
+;
+
+FOR_STMT ::=
+    For ParentesisAbierto TIPO_DATO Identificador OpAsignacion EXPRESION PuntoComa EXPRESION PuntoComa EXPRESION_INCREMENTO ParentesisCerrado BLOQUE
+    | For ParentesisAbierto TIPO_DATO Identificador DosPuntos EXPRESION ParentesisCerrado BLOQUE
+;
+
+WHILE_STMT ::=
+    While ParentesisAbierto EXPRESION ParentesisCerrado BLOQUE
+;
+
+DO_WHILE_STMT ::= 
+    Do BLOQUE While ParentesisAbierto EXPRESION ParentesisCerrado PuntoComa
+;
+
+// Declaraciones de Objetos
+DECLARACION_OBJETO ::=
+    TIPO_DATO Identificador OpAsignacion New Identificador ParentesisAbierto ARGUMENTOS ParentesisCerrado PuntoComa
+    | Identificador Identificador OpAsignacion New Identificador ParentesisAbierto ARGUMENTOS ParentesisCerrado PuntoComa
+;
+
+// Expresiones
+EXPRESION ::=
+    TERMINO
+    | EXPRESION OpLogico EXPRESION
+    | EXPRESION OpComparacion EXPRESION
+    | EXPRESION OpAritmetico EXPRESION
+    | OpAritmetico EXPRESION
+    | ParentesisAbierto EXPRESION ParentesisCerrado
+;
+
+TERMINO ::=
+    Identificador
+    | NumeroEntero
+    | NumeroDecimal
+    | CadenaTexto
+    | Null
+    | Identificador CorcheteAbierto EXPRESION CorcheteCerrado
+    | Identificador Punto Length
+    | LLAMADA_METODO_EXPR
+;
+
+// Manejo de Excepciones
+TRY_CATCH ::=
+    Try BLOQUE Catch ParentesisAbierto Identificador Identificador ParentesisCerrado BLOQUE
+    | Try BLOQUE Catch ParentesisAbierto Identificador Identificador ParentesisCerrado BLOQUE Finally BLOQUE
+;
+
+// Switch
+SWITCH_STMT ::=
+    Switch ParentesisAbierto EXPRESION ParentesisCerrado LlaveAbierta CASE_BLOCKS LlaveCerrada
+;
+
+CASE_BLOCKS ::=
+    CASE_BLOCK
+    | CASE_BLOCKS CASE_BLOCK
+;
+
+CASE_BLOCK ::=
+    Case EXPRESION DosPuntos CASE_BODY Break PuntoComa
+    | Default DosPuntos CASE_BODY
+    | Default DosPuntos CASE_BODY Break PuntoComa
+;
+
+CASE_BODY ::=
+    SENTENCIA
+    | CASE_BODY SENTENCIA
+;
+
+// Impresión
+PRINT_STMT ::=
+    SystemClass Punto Out Punto Println ParentesisAbierto EXPRESION ParentesisCerrado PuntoComa
+    | SystemClass Punto Out Punto Print ParentesisAbierto EXPRESION ParentesisCerrado PuntoComa
+    | SystemClass Punto Out Punto Println ParentesisAbierto ParentesisCerrado PuntoComa
+    | SystemClass Punto Out Punto Print ParentesisAbierto ParentesisCerrado PuntoComa
+;
+
+// Asignaciones y Llamadas
+ASIGNACION ::=
+    This Punto Identificador OpAsignacion Identificador PuntoComa
+;
+
+ASIGNACION_ARRAY ::=
+    Identificador CorcheteAbierto EXPRESION CorcheteCerrado OpAsignacion EXPRESION PuntoComa
+;
+
+EXPRESION_INCREMENTO ::=
+    Identificador OpIncremento
+;
+
+LLAMADA_METODO ::=
+    Identificador Punto Identificador ParentesisAbierto ARGUMENTOS ParentesisCerrado PuntoComa
+    | Identificador ParentesisAbierto ARGUMENTOS ParentesisCerrado PuntoComa
+;
+
+LLAMADA_METODO_EXPR ::=
+    Identificador Punto Identificador ParentesisAbierto ARGUMENTOS ParentesisCerrado
+    | Identificador ParentesisAbierto ARGUMENTOS ParentesisCerrado
+;
+
+ARGUMENTOS ::=
+    /* vacío */
+    | LISTA_ARGUMENTOS
+;
+
+LISTA_ARGUMENTOS ::=
+    EXPRESION
+    | LISTA_ARGUMENTOS Coma EXPRESION
+;
