@@ -15,7 +15,7 @@ Un programa educativo diseñado para convertir código Java a pseudocódigo en e
 ## Instalación
 1. Clonar el repositorio
 ```bash
-git clone https://github.com/[usuario]/convertidor-java-pseudocodigo.git
+git clone https://github.com/MBAPEINT/ConvertidorJavaPseudocodigo.git
 ```
 2. Abrir el proyecto en su IDE preferido
 3. Compilar y ejecutar la clase `ProyectoFinal.java`
