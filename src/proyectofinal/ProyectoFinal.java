@@ -20,8 +20,8 @@ public class ProyectoFinal {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        generarLexer();
-        generarParser();
+        //generarLexer();
+        //generarParser();
         inicio();
     }
     
